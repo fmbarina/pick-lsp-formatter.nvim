@@ -1,0 +1,4 @@
+contact_links:
+  - name: Question
+    url: https://github.com/fmbarina/pick-lsp-formatter.nvim/discussions/new?category=q-a
+    about: Usage questions and support requests are answered in the discussions tab
