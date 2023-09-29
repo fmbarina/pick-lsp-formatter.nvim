@@ -2,7 +2,9 @@
 
 **pick-lsp-formatter** is a plugin to choose a language server to format with.
 
-TODO: put a video of me using it here.
+https://github.com/fmbarina/pick-lsp-formatter.nvim/assets/70731450/c2102d63-2f99-4288-9727-adc280570553
+
+<sub>The notifications are only for the sake of demonstration, they aren't part of the plugin.</sub>
 
 ## ✨ Features
 
