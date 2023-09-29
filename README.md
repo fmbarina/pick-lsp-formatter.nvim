@@ -13,7 +13,7 @@ https://github.com/fmbarina/pick-lsp-formatter.nvim/assets/70731450/c2102d63-2f9
   - per working directory
   - per project
 
-By default, [`vim.buf.lsp.format()`](https://neovim.io/doc/user/lsp.html#vim.lsp.buf.format()) will format the buffer will all attached language servers capable of it, which is less than ideal. It *does* let you filter which language servers to use, but doing that every time isn't very nice. This is the issue this plugin aims to alleviate.
+By default, [`vim.buf.lsp.format()`](https://neovim.io/doc/user/lsp.html#vim.lsp.buf.format()) will format the buffer with all attached language servers capable of it, which is less than ideal. It *does* let you filter which language servers to use, but doing that every time isn't very nice. This is the issue this plugin aims to alleviate.
 
 It exists because I wanted to format lua using stylua, so I installed efm. I soon realized I didn't want *every* lua file formatted with stylua. Later, I even thought to stop using stylua at all—editorconfig is right there! Alas, pick-lsp-formatter already existed by then, so stylua gets another chance... in select environments.
 
@@ -78,7 +78,7 @@ At least for now, pick-lsp-formatter won't create any commands, and it'll likely
 **Recommendation:** anywhere you `vim.lsp.buf.format()`'ed, use `require('plf').format()` instead. That's it.
 
 <details>
-<summary>Example: my (simplified) lsp config</summary>
+<summary>Example: a snip of my (simplified) lsp config</summary>
 
   ```lua
   lsp.on_attach(function(client, bufnr)
@@ -117,11 +117,11 @@ The settings table (`opts`) may define the following fields.
 
 Note that `when_unset` can be a function. When this is the case, it must return `true` to open picker or `false` to format normally.
 
-And "format normally" here meanss calling `vim.lsp.buf.format` as you would without this plugin.
+And "format normally" here means calling `vim.lsp.buf.format` as you would without this plugin.
 
 ### Scope
 
-By default (when `find_project == false`) plf will save your choices for the current working directory. This may not be the best choice if your working directory rarely coincides with the root of projects you're working on. Worst case? You'll need pick servers again.
+By default (when `find_project == false`), plf will save your choices for the current working directory. This may not be the best choice if your working directory rarely coincides with the root of projects you're working on. Worst case? You'll need to pick servers again.
 
 If you would like to save your choices for the current project instead, use `find_project == true`. It'll then search upwards for files or directories in `find_patterns` and once it finds one, it will save your choices for that directory. It also falls back to the cwd if the root can't be found.
 
