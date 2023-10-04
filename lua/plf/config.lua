@@ -12,7 +12,7 @@ local defaults = {
 M.opts = {}
 
 function M.build(opts)
-  M.opts = vim.tbl_extend('force', {}, defaults, opts)
+  M.opts = vim.tbl_extend('force', {}, defaults, opts or {})
 end
 
 return M
