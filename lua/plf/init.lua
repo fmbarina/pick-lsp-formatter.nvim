@@ -14,7 +14,7 @@ local function get_save_file()
   if config.opts.find_project then
     local files = vim.fs.find(config.opts.find_patterns, {
       upward = true,
-      stop = vim.loop.os_homedir(),
+      stop = vim.uv.os_homedir(),
       path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
       limit = 1, -- default value, just to be explicit
     })
@@ -81,7 +81,7 @@ end
 ---@return table #Server list
 local function get_format_servers()
   local bufnr = vim.api.nvim_get_current_buf()
-  local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
   local servers = {}
 
   for i, client in ipairs(clients) do
