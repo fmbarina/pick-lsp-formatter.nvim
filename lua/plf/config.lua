@@ -1,16 +1,25 @@
 local M = {}
 
+---@class plf.Config
+---@field data_dir? string
+---@field when_unset? 'pick' | fun():boolean
+---@field set_on_pick? boolean
+---@field find_project? boolean
+---@field find_patterns? string[]
+---@field exclude_lsp? string[]
+M.opts = {}
+
+---@type plf.Config
 local defaults = {
   data_dir = vim.fn.expand(vim.fn.stdpath('state') .. '/picklspfmt/'),
-  when_unset = 'pick', -- nil, 'pick', fun()->bool
+  when_unset = 'pick',
   set_on_pick = true,
   find_project = false,
   find_patterns = { '.git/' },
   exclude_lsp = {},
 }
 
-M.opts = {}
-
+---@param opts plf.Config
 function M.build(opts)
   M.opts = vim.tbl_extend('force', {}, defaults, opts or {})
 end

@@ -4,12 +4,12 @@
 
 https://github.com/fmbarina/pick-lsp-formatter.nvim/assets/70731450/c2102d63-2f99-4288-9727-adc280570553
 
-<sub>The notifications are only for the sake of demonstration, they aren't part of the plugin.</sub>
+<sub>Notifications are for the sake of demonstration and aren't part of the plugin.</sub>
 
-## ✨ Features
+## Features
 
-- 📝 Lets you pick a single language server when formatting
-- 💾 Remembers per filetype choices between sessions, which can be saved:
+- Lets you pick a single language server when formatting
+- Remembers per-filetype choices between sessions, which can be saved:
   - per working directory
   - per project
 
@@ -17,80 +17,55 @@ By default, [`vim.buf.lsp.format()`](https://neovim.io/doc/user/lsp.html#vim.lsp
 
 It exists because I wanted to format lua using stylua, so I installed efm. I soon realized I didn't want *every* lua file formatted with stylua. Later, I even thought to stop using stylua at all—editorconfig is right there! Alas, pick-lsp-formatter already existed by then, so stylua gets another chance... in select environments.
 
-Anyways, hear me out... [efm](https://github.com/mattn/efm-langserver) + [configs](https://github.com/creativenull/efmls-configs-nvim) = good stuff.
+Anyway, please hear me out... [efm](https://github.com/mattn/efm-langserver) + [configs](https://github.com/creativenull/efmls-configs-nvim) = good stuff.
 
-## 📦 Installation
+## Installation
 
-For the "I know what I'm doing" users:
-- `fmbarina/pick-lsp-formatter.nvim`
-- `require('plf').setup(opts)` if you need.
-- Install [telescope](https://github.com/nvim-telescope/telescope.nvim) or [dressing](https://github.com/stevearc/dressing.nvim) (or both) for a better picker.
+- Install `fmbarina/pick-lsp-formatter.nvim`
+- Ensure `require('plf').setup(opts)` is called.
+- Optionally, install [telescope](https://github.com/nvim-telescope/telescope.nvim) or [snacks.picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md) for a better picker.
 
-<details>
-<summary>For lazy.nvim users</summary>
+Using lazy.nvim:
 
-  Add the following to your plugin list, your settings go in opts.
-
-  ```lua
-  {
-    'fmbarina/pick-lsp-formatter.nvim',
-    dependencies = {
-      'stevearc/dressing.nvim',        -- Optional, better picker
-      'nvim-telescope/telescope.nvim', -- Optional, better picker
+```lua
+{
+  'fmbarina/pick-lsp-formatter.nvim',
+  -- Optional, just one will do
+  dependencies = {
+    'nvim-telescope/telescope.nvim',
+    {
+      'folke/snacks.nvim',
+      opts = {
+        picker = {enabled = true, ui_select = true}
+      }
     },
-    main = 'plf',
-    lazy = true,
-    opts = {},
-  }
-  ```
-</details>
+  },
+  main = 'plf',
+  lazy = true,
+  opts = {},
+}
+```
 
-<details>
-<summary>For packer.nvim users</summary>
+Again, if you want a better picker (you really should), you only need to install one of the dependencies, but having both installed will work, too.
 
-  Installation:
-
-  ```lua
-  use({
-    'fmbarina/pick-lsp-formatter.nvim',
-    requires = {
-      'stevearc/dressing.nvim',        -- Optional, better picker
-      'nvim-telescope/telescope.nvim', -- Optional, better picker
-    }
-  })
-  ```
-
-  Setup:
-
-  ```lua
-  require('plf').setup()
-  ```
-
-  Your settings can be passed through the setup function.
-</details>
-
-Again, if you want a better picker (default kinda sucks), you only need to install one of the dependencies, but having both installed will work, too.
-
-## 💻️ Usage
+## Usage
 
 At least for now, pick-lsp-formatter won't create any commands, and it'll likely never create any keybindings.
 
 **Recommendation:** anywhere you `vim.lsp.buf.format()`'ed, use `require('plf').format()` instead. That's it.
 
-<details>
-<summary>Example: a snip of my (simplified) lsp config</summary>
+For example, here's a snip of my (simplified) lsp config:
 
-  ```lua
-  lsp.on_attach(function(client, bufnr)
-    -- Stuff...
-    vim.keymap.set('n', '<leader>lf', function()
-      -- vim.lsp.buf.format(opts) -- We take this out
-      require('plf').format(opts) -- And put this in
-    end, { buffer = bufnr, desc = 'LSP format buffer' })
-    -- More stuff...
-  end)
-  ```
-</details>
+```lua
+lsp.on_attach(function(client, bufnr)
+-- Stuff...
+vim.keymap.set('n', '<leader>lf', function()
+  -- vim.lsp.buf.format(opts) -- We take this out
+  require('plf').format(opts) -- And put this in
+end, { buffer = bufnr, desc = 'LSP format buffer' })
+-- More stuff...
+end)
+```
 
 ### API
 
@@ -100,9 +75,9 @@ pick-lsp-formatter exposes a simple API to:
 - Open picker with formatting capable servers and format buffer with chosen server.
 - Format with a specific server (*very* simple wrapper around `vim.lsp.buf.format`)
 
-For now, you can see these near the end of `lua/plf/init.lua`, but I'll document them properly soon™.
+Relevant functions are near the end of `lua/plf/init.lua`.
 
-## 🔧 Configuration
+## Configuration
 
 The settings table (`opts`) may define the following fields.
 

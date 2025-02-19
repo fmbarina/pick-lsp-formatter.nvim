@@ -2,8 +2,12 @@ local config = require('plf.config')
 
 local M = {}
 
+--- Dictionary defining which language server to use for each filetype
+--- The key is the filetype and the language server name is its value
+---@alias plf.Format { [string]: string }
+
 --- Get save file path for current working directory or project.
----@return string #Path
+---@return string path
 local function get_save_file()
   local sep = '/'
   if vim.fn.has('win32') == 1 then
@@ -26,8 +30,8 @@ local function get_save_file()
   return config.opts.data_dir .. string.gsub(current, sep, '%%')
 end
 
----@param fmt table filetype = server pairs
----@return string #Serialized pairs
+---@param fmt plf.Format Format dictionary
+---@return string
 local function serialize(fmt)
   local ret = ''
   for ft, server in pairs(fmt) do
@@ -36,8 +40,8 @@ local function serialize(fmt)
   return ret
 end
 
----@param fmt string Serialized pairs
----@return table #filetype = server pairs
+---@param fmt string Serialized format dictionary
+---@return plf.Format
 local function deserialize(fmt)
   local ret = {}
   for _, line in ipairs(vim.fn.split(fmt, '\n')) do
@@ -47,9 +51,9 @@ local function deserialize(fmt)
   return ret
 end
 
---- Save filetype = server pairs.
+--- Save format dictionary
 ---@param path string Path to save data in
----@param fmt table filetype = server pairs to save
+---@param fmt plf.Format Format dictionary
 local function save(path, fmt)
   local handle = io.open(path, 'w+')
   if handle then
@@ -58,9 +62,9 @@ local function save(path, fmt)
   end
 end
 
---- Load filetype = server pairs.
+--- Load format dictionary
 ---@param path string Path to load data from
----@return table #filetype = server pairs loaded
+---@return plf.Format
 local function load(path)
   local fmt = {}
 
@@ -77,8 +81,8 @@ local function load(path)
   return fmt
 end
 
---- Get active LSP servers capable of formatting.
----@return table #Server list
+--- Get active LSP servers capable of formatting
+---@return string[] servers
 local function get_format_servers()
   local bufnr = vim.api.nvim_get_current_buf()
   local clients = vim.lsp.get_clients({ bufnr = bufnr })
@@ -103,17 +107,17 @@ end
 ---@param opts table? Options passed to vim.lsp.buf.format()
 ---@param server string Language server to format with
 function M.format_with(opts, server)
-  opts = vim.tbl_extend('force', {}, opts, { name = server })
+  opts = vim.tbl_extend('force', opts or {}, { name = server })
   vim.lsp.buf.format(opts)
 end
 
---- Opens picker to choose LSP server for current filetype and formats buffer.
---- Note that the buffer will only be formatted if an LSP server is picked.
---- Picked server may be set as the default formatter for that filetype in the
---- current working directory or project, following the `set_on_pick` setting.
---- This behavior may be overridden using the set parameter.
+--- Opens picker to choose LSP server for current filetype, then formats buffer.
+--- Buffer will only be formatted if an LSP server is picked. Picked server may
+--- be set as the default formatter for that filetype in the current working
+--- directory or project, following the `set_on_pick` setting.
+--- This behavior can be overridden using the set parameter.
 ---@param opts table? Options passed to vim.lsp.buf.format()
----@param set boolean? Override set_on_pick setting
+---@param set boolean? Override set_on_pick setting, defaults when nil
 function M.pick_format(opts, set)
   opts = opts or {}
   if set == nil then
@@ -154,20 +158,20 @@ function M.pick_format(opts, set)
     local conf = require('telescope.config').values
     local theme = require('telescope.themes').get_dropdown()
     pickers
-      .new(theme, {
-        prompt_title = prompt,
-        finder = finders.new_table({ results = servers }),
-        sorter = conf.generic_sorter(),
-        attach_mappings = function(prompt_bufnr, _)
-          actions.select_default:replace(function()
-            actions.close(prompt_bufnr)
-            local server = state.get_selected_entry()[1]
-            select(server)
-          end)
-          return true
-        end,
-      })
-      :find()
+        .new(theme, {
+          prompt_title = prompt,
+          finder = finders.new_table({ results = servers }),
+          sorter = conf.generic_sorter(),
+          attach_mappings = function(prompt_bufnr, _)
+            actions.select_default:replace(function()
+              actions.close(prompt_bufnr)
+              local server = state.get_selected_entry()[1]
+              select(server)
+            end)
+            return true
+          end,
+        })
+        :find()
     return
   end
 
@@ -180,10 +184,10 @@ function M.pick_format(opts, set)
   end)
 end
 
---- Formats buffer using selected LSP server for filetype.
+--- Format buffer using selected LSP server for filetype.
 --- When no server is selected, `plf.pick_format()` will be called if:
---- * `when_unset` == `pick` OR
---- * `when_unset()` -> `true`
+--- - `when_unset` == `pick` OR
+--- - `when_unset()` -> `true`
 ---@param opts table? Options passed to vim.lsp.buf.format()
 function M.format(opts)
   opts = opts or {}
@@ -205,7 +209,7 @@ function M.format(opts)
 end
 
 --- Setup plugin, must be called before `plf.format` and `plf.pick_format`.
----@param opts table? Plugin options
+---@param opts plf.Config? Plugin options
 function M.setup(opts)
   config.build(opts or {})
   vim.fn.mkdir(config.opts.data_dir, 'p')
