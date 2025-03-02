@@ -1,6 +1,6 @@
 local M = {}
 
----@class plf.Config
+---@class plf.Opts
 ---@field data_dir? string
 ---@field when_unset? 'pick' | fun():boolean
 ---@field set_on_pick? boolean
@@ -9,7 +9,7 @@ local M = {}
 ---@field exclude_lsp? string[]
 M.opts = {}
 
----@type plf.Config
+---@type plf.Opts
 local defaults = {
   data_dir = vim.fn.expand(vim.fn.stdpath('state') .. '/picklspfmt/'),
   when_unset = 'pick',
@@ -19,7 +19,7 @@ local defaults = {
   exclude_lsp = {},
 }
 
----@param opts plf.Config
+---@param opts? plf.Opts
 function M.build(opts)
   M.opts = vim.tbl_extend('force', {}, defaults, opts or {})
 end

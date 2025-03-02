@@ -104,7 +104,7 @@ local function get_format_servers()
 end
 
 --- Calls vim.lsp.buf.format with opts, extended with { name = server }.
----@param opts table? Options passed to vim.lsp.buf.format()
+---@param opts table Options passed to vim.lsp.buf.format()
 ---@param server string Language server to format with
 function M.format_with(opts, server)
   opts = vim.tbl_extend('force', opts or {}, { name = server })
@@ -116,8 +116,8 @@ end
 --- be set as the default formatter for that filetype in the current working
 --- directory or project, following the `set_on_pick` setting.
 --- This behavior can be overridden using the set parameter.
----@param opts table? Options passed to vim.lsp.buf.format()
----@param set boolean? Override set_on_pick setting, defaults when nil
+---@param opts? table Options passed to vim.lsp.buf.format()
+---@param set? boolean Override set_on_pick setting, defaults when nil
 function M.pick_format(opts, set)
   opts = opts or {}
   if set == nil then
@@ -188,7 +188,7 @@ end
 --- When no server is selected, `plf.pick_format()` will be called if:
 --- - `when_unset` == `pick` OR
 --- - `when_unset()` -> `true`
----@param opts table? Options passed to vim.lsp.buf.format()
+---@param opts? table Options passed to vim.lsp.buf.format()
 function M.format(opts)
   opts = opts or {}
 
@@ -209,7 +209,7 @@ function M.format(opts)
 end
 
 --- Setup plugin, must be called before `plf.format` and `plf.pick_format`.
----@param opts plf.Config? Plugin options
+---@param opts? plf.Opts Plugin options
 function M.setup(opts)
   config.build(opts or {})
   vim.fn.mkdir(config.opts.data_dir, 'p')
