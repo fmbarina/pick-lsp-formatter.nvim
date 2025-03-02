@@ -104,9 +104,9 @@ local function get_format_servers()
 end
 
 --- Calls vim.lsp.buf.format with opts, extended with { name = server }.
----@param opts table Options passed to vim.lsp.buf.format()
 ---@param server string Language server to format with
-function M.format_with(opts, server)
+---@param opts? table Options passed to vim.lsp.buf.format()
+function M.format_with(server, opts)
   opts = vim.tbl_extend('force', opts or {}, { name = server })
   vim.lsp.buf.format(opts)
 end
@@ -129,7 +129,7 @@ function M.pick_format(opts, set)
   local server_count = vim.fn.len(servers)
 
   if server_count == 1 then
-    M.format_with(opts, servers[1])
+    M.format_with(servers[1], opts)
     return
   elseif server_count == 0 then
     -- will fail, but we don't want plf to change *how* it fails (for now)
@@ -143,7 +143,7 @@ function M.pick_format(opts, set)
     if set then
       config.fmt[ft] = choice
     end
-    M.format_with(opts, choice)
+    M.format_with(choice, opts)
   end
 
   local has_telescope, _ = pcall(require, 'telescope')
@@ -198,7 +198,7 @@ function M.format(opts)
   local b_type = type(behavior)
 
   if server ~= nil then
-    M.format_with(opts, server)
+    M.format_with(server, opts)
   elseif (b_type == 'string') and (behavior == 'pick') then
     M.pick_format()
   elseif (b_type == 'function') and behavior() then
